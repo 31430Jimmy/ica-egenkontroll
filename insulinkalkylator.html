@@ -6,18 +6,16 @@
     <title>Avancerad Insulinkalkylator</title>
     <style>
         :root {
-            --primary: #4a90e2;
-            --primary-dark: #357abd;
-            --bg: #f5f7fa;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
             --card-bg: #ffffff;
-            --text: #333333;
-            --border: #dddddd;
-            --warning: #fff3cd;
-            --warning-text: #856404;
-            --danger: #f8d7da;
-            --danger-text: #721c24;
-            --success: #d4edda;
-            --success-text: #155724;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --info-bg: #eff6ff;
+            --info-border: #bfdbfe;
+            --info-text: #1e40af;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -28,119 +26,126 @@
             display: flex;
             justify-content: center;
         }
-        .calculator {
+        .container {
+            width: 100%;
+            max-width: 500px;
             background: var(--card-bg);
             padding: 24px;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            width: 100%;
-            max-width: 480px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
         h1 {
             font-size: 20px;
             margin-top: 0;
             margin-bottom: 20px;
             text-align: center;
-            color: #2c3e50;
         }
         .toggle-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
             gap: 10px;
             margin-bottom: 16px;
         }
-        .btn-toggle {
-            background: #f0f2f5;
-            border: 2px solid transparent;
-            padding: 12px;
+        .toggle-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
             border-radius: 8px;
             cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
+            font-weight: 500;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
-            transition: all 0.2s ease;
+            transition: all 0.2s;
         }
-        .btn-toggle.active {
-            background: #e1f5fe;
+        .toggle-btn.active {
+            background: var(--primary);
+            color: white;
             border-color: var(--primary);
-            color: var(--primary-dark);
         }
-        .input-block {
+        .form-group {
             margin-bottom: 16px;
         }
         label {
             display: block;
-            font-weight: 600;
-            margin-bottom: 6px;
             font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 6px;
         }
-        input[type="number"] {
+        input {
             width: 100%;
             padding: 10px;
             border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 16px;
+            border-radius: 8px;
             box-sizing: border-box;
+            font-size: 16px;
         }
-        input[readonly] {
-            background-color: #f1f3f5;
-            color: #6c757d;
-            cursor: not-allowed;
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
-        .result-box {
-            background: #f8f9fa;
+        .result-card {
+            background: var(--bg);
             border: 1px solid var(--border);
             border-radius: 8px;
             padding: 16px;
-            margin-top: 20px;
             text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
         }
-        .total-dose {
+        .result-total {
             font-size: 32px;
             font-weight: bold;
-            color: var(--primary-dark);
-            margin: 10px 0;
+            color: var(--primary);
+            margin: 8px 0;
         }
-        .breakdown {
-            font-size: 13px;
-            color: #666;
-        }
-        .alert {
-            padding: 12px;
-            border-radius: 6px;
-            margin-top: 16px;
+        .result-breakdown {
             font-size: 14px;
-            line-height: 1.4;
-            display: none;
+            color: var(--text-light);
         }
-        .alert-warning { background: var(--warning); color: var(--warning-text); border: 1px solid #ffeeba; }
-        .alert-danger { background: var(--danger); color: var(--danger-text); border: 1px solid #f5c6cb; }
-        .settings-header {
-            margin-top: 24px;
-            cursor: pointer;
+        .settings-toggle {
+            display: block;
+            text-align: center;
+            color: var(--primary);
+            text-decoration: none;
             font-size: 14px;
-            font-weight: 600;
-            color: #666;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-top: 1px dashed var(--border);
+            font-weight: 500;
+            margin-bottom: 16px;
         }
         .settings-content {
             display: none;
-            margin-top: 12px;
+            border-top: 1px solid var(--border);
+            padding-top: 16px;
+            margin-top: 16px;
         }
-        .settings-content.open {
+        .settings-content.show {
             display: block;
+        }
+        /* Ny Tipsruta för Insulindelning och Timing */
+        .tips-box {
+            background-color: var(--info-bg);
+            border: 1px solid var(--info-border);
+            border-radius: 8px;
+            padding: 14px;
+            margin-top: 20px;
+            color: var(--info-text);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .tips-box h3 {
+            margin-top: 0;
+            margin-bottom: 6px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         .footer {
             margin-top: 24px;
             font-size: 11px;
-            color: #999;
+            color: var(--text-light);
             text-align: center;
             line-height: 1.4;
         }
@@ -148,76 +153,74 @@
 </head>
 <body>
 
-<div class="calculator">
+<div class="container">
     <h1>Insulinkalkylator med Säkerhetsspärr</h1>
 
-    <!-- Tid på dygnet -->
-    <label>Tid på dygnet</label>
-    <div class="toggle-group">
-        <button type="button" id="btn-dag" class="btn-toggle active" onclick="setDygnet('dag')">☀️ Dagtid</button>
-        <button type="button" id="btn-natt" class="btn-toggle" onclick="setDygnet('natt')">🌙 Natt</button>
+    <div class="form-group">
+        <label>Tid på dygnet</label>
+        <div class="toggle-group">
+            <button class="toggle-btn active" id="btn-dag">☀ Dagtid</button>
+            <button class="toggle-btn" id="btn-natt">🌙 Natt</button>
+        </div>
     </div>
 
-    <!-- Måltidstyp -->
-    <label>Måltidstyp</label>
-    <div class="toggle-group">
-        <button type="button" id="btn-frukost" class="btn-toggle active" onclick="setMaltid('frukost')">🍳 Frukost</button>
-        <button type="button" id="btn-ovrig" class="btn-toggle" onclick="setMaltid('ovrig')">🍽️ Övrig måltid</button>
+    <div class="form-group">
+        <label>Måltidstyp</label>
+        <div class="toggle-group">
+            <button class="toggle-btn active" id="btn-frukost">🍳 Frukost</button>
+            <button class="toggle-btn" id="btn-ovrig">🍽 Övrig måltid</button>
+        </div>
     </div>
 
-    <!-- Inmatning -->
-    <div class="input-block">
-        <label for="bs-aktuellt">Aktuellt BS (mmol/L)</label>
-        <input type="number" id="bs-aktuellt" step="0.1" value="10.0" oninput="calculateDose()">
+    <div class="form-group">
+        <label for="input-bs">Aktuellt BS (mmol/L)</label>
+        <input type="number" id="input-bs" value="10.0" step="0.1" min="0">
     </div>
 
-    <div class="input-block">
-        <label for="kolhydrater">Kolhydrater (g)</label>
-        <input type="number" id="kolhydrater" step="1" value="0" oninput="calculateDose()">
+    <div class="form-group">
+        <label for="input-kh">Kolhydrater (g)</label>
+        <input type="number" id="input-kh" value="0" step="1" min="0">
     </div>
 
-    <!-- Resultat -->
-    <div class="result-box">
+    <div class="result-card">
         <label>Rekommenderad totaldos</label>
-        <div class="total-dose" id="total-dose-display">0.0 E</div>
-        <div class="breakdown" id="breakdown-display">Mat: 0.0 E | Korr: 0.0 E</div>
+        <div class="result-total" id="total-dose">0.0 E</div>
+        <div class="result-breakdown" id="breakdown-dose">Mat: 0.0 E | Korr: 0.0 E</div>
     </div>
 
-    <!-- Varningar -->
-    <div id="alert-warn" class="alert alert-warning"></div>
-    <div id="alert-danger" class="alert alert-danger"></div>
-
-    <!-- Inställningar Panel -->
-    <div class="settings-header" onclick="toggleSettings()">
-        <span>Inställningar och Kvoter</span>
-        <span id="settings-arrow">▼</span>
-    </div>
-
+    <a href="#" class="settings-toggle" id="settings-btn">Inställningar och Kvoter ▼</a>
+    
     <div class="settings-content" id="settings-panel">
-        <div class="input-block">
-            <label for="tdd-input">TDD (Styrande referens)</label>
-            <input type="number" id="tdd-input" step="1" value="40" oninput="updateSettingsAndCalculate()">
+        <div class="form-group">
+            <label for="input-tdd">TDD (Styrande referens)</label>
+            <input type="number" id="input-tdd" value="40" step="1">
         </div>
-        <div class="input-block">
-            <label>Frukostkvot (g/E) <small style="font-weight:normal;">(300-regeln)</small></label>
-            <input type="number" id="kvot-frukost" readonly>
+        <div class="form-group">
+            <label for="input-fkvot">Frukostkvot (g/E) (300-regeln)</label>
+            <input type="number" id="input-fkvot" readonly>
         </div>
-        <div class="input-block">
-            <label>Övrig kvot (g/E) <small style="font-weight:normal;">(500-regeln)</small></label>
-            <input type="number" id="kvot-ovrig" readonly>
+        <div class="form-group">
+            <label for="input-okvot">Övrig kvot (g/E) (500-regeln)</label>
+            <input type="number" id="input-okvot" readonly>
         </div>
-        <div class="input-block">
-            <label>Korr.kvot Dag (mmol/L) <small style="font-weight:normal;">(100-regeln)</small></label>
-            <input type="number" id="kvot-korr-dag" readonly>
+        <div class="form-group">
+            <label for="input-kdag">Korr.kvot Dag (mmol/L) (100-regeln)</label>
+            <input type="number" id="input-kdag" readonly>
         </div>
-        <div class="input-block">
-            <label>Korr.kvot Natt (mmol/L) <small style="font-weight:normal;">(200-regeln)</small></label>
-            <input type="number" id="kvot-korr-natt" readonly>
+        <div class="form-group">
+            <label for="input-knatt">Korr.kvot Natt (mmol/L) (200-regeln)</label>
+            <input type="number" id="input-knatt" readonly>
         </div>
-        <div class="input-block">
-            <label for="bs-mal">Målvärde BS (mmol/L)</label>
-            <input type="number" id="bs-mal" step="0.1" value="6.0" oninput="updateSettingsAndCalculate()">
+        <div class="form-group">
+            <label for="input-mal">Målvärde BS (mmol/L)</label>
+            <input type="number" id="input-mal" value="6.0" step="0.1">
         </div>
+    </div>
+
+    <!-- NYTT TILLÄGG: Tipsruta för Insulindelning och Timing -->
+    <div class="tips-box" id="timing-tips">
+        <h3>💡 Tips för dosering & timing (vid större måltider)</h3>
+        <div id="tips-text">Ange värden ovan för att se anpassade doseringstips baserat på ditt aktuella blodsocker.</div>
     </div>
 
     <div class="footer">
@@ -226,136 +229,110 @@
 </div>
 
 <script>
-    // State-variabler
-    let dygnet = 'dag';
-    let maltid = 'frukost';
+    // State
+    let isDag = true;
+    let isFrukost = true;
 
-    // Vid start, ladda sparade värden eller sätt standardvärden
-    window.onload = function() {
-        if (localStorage.getItem('tdd')) {
-            document.getElementById('tdd-input').value = localStorage.getItem('tdd');
-        }
-        if (localStorage.getItem('bsMal')) {
-            document.getElementById('bs-mal').value = localStorage.getItem('bsMal');
-        }
-        if (localStorage.getItem('dygnet')) {
-            setDygnet(localStorage.getItem('dygnet'));
-        }
-        if (localStorage.getItem('maltid')) {
-            setMaltid(localStorage.getItem('maltid'));
-        }
-        
-        updateSettingsAndCalculate();
-    };
+    // DOM Elements
+    const btnDag = document.getElementById('btn-dag');
+    const btnNatt = document.getElementById('btn-natt');
+    const btnFrukost = document.getElementById('btn-frukost');
+    const btnOvrig = document.getElementById('btn-ovrig');
+    const inputBs = document.getElementById('input-bs');
+    const inputKh = document.getElementById('input-kh');
+    const inputTdd = document.getElementById('input-tdd');
+    const inputFkvot = document.getElementById('input-fkvot');
+    const inputOkvot = document.getElementById('input-okvot');
+    const inputKdag = document.getElementById('input-kdag');
+    const inputKnatt = document.getElementById('input-knatt');
+    const inputMal = document.getElementById('input-mal');
+    const totalDoseEl = document.getElementById('total-dose');
+    const breakdownDoseEl = document.getElementById('breakdown-dose');
+    const settingsBtn = document.getElementById('settings-btn');
+    const settingsPanel = document.getElementById('settings-panel');
+    const tipsTextEl = document.getElementById('tips-text');
 
-    function toggleSettings() {
-        const panel = document.getElementById('settings-panel');
-        const arrow = document.getElementById('settings-arrow');
-        panel.classList.toggle('open');
-        arrow.textContent = panel.classList.contains('open') ? '▲' : '▼';
-    }
+    // Toggle Settings
+    settingsBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        settingsPanel.classList.toggle('show');
+    });
 
-    function setDygnet(val) {
-        dygnet = val;
-        localStorage.setItem('dygnet', val);
-        document.getElementById('btn-dag').classList.toggle('active', val === 'dag');
-        document.getElementById('btn-natt').classList.toggle('active', val === 'natt');
-        calculateDose();
-    }
+    // Toggle Buttons
+    btnDag.addEventListener('click', () => { isDag = true; btnDag.classList.add('active'); btnNatt.classList.remove('active'); calculate(); });
+    btnNatt.addEventListener('click', () => { isDag = false; btnNatt.classList.add('active'); btnDag.classList.remove('active'); calculate(); });
+    btnFrukost.addEventListener('click', () => { isFrukost = true; btnFrukost.classList.add('active'); btnOvrig.classList.remove('active'); calculate(); });
+    btnOvrig.addEventListener('click', () => { isFrukost = false; btnOvrig.classList.add('active'); btnFrukost.classList.remove('active'); calculate(); });
 
-    function setMaltid(val) {
-        maltid = val;
-        localStorage.setItem('maltid', val);
-        document.getElementById('btn-frukost').classList.toggle('active', val === 'frukost');
-        document.getElementById('btn-ovrig').classList.toggle('active', val === 'ovrig');
-        calculateDose();
-    }
+    // Inputs
+    [inputBs, inputKh, inputTdd, inputMal].forEach(input => {
+        input.addEventListener('input', calculate);
+    });
 
-    function updateSettingsAndCalculate() {
-        const tdd = parseFloat(document.getElementById('tdd-input').value) || 0;
-        const bsMal = parseFloat(document.getElementById('bs-mal').value) || 6.0;
+    function calculate() {
+        const tdd = parseFloat(inputTdd.value) || 0;
+        const bs = parseFloat(inputBs.value) || 0;
+        const kh = parseFloat(inputKh.value) || 0;
+        const mal = parseFloat(inputMal.value) || 6.0;
 
-        // Spara inställningar till localStorage
-        localStorage.setItem('tdd', tdd);
-        localStorage.setItem('bsMal', bsMal);
+        // Beräkna kvoter utifrån standardregler
+        const fKvot = tdd > 0 ? Math.round(300 / tdd) : 0;
+        const oKvot = tdd > 0 ? Math.round(500 / tdd) : 0;
+        const kDag = tdd > 0 ? parseFloat((100 / tdd).toFixed(1)) : 0;
+        const kNatt = tdd > 0 ? parseFloat((200 / tdd).toFixed(1)) : 0;
 
-        if (tdd > 0) {
-            // Beräkna kvoterna dynamiskt enligt reglerna
-            const frukostKvot = 300 / tdd;
-            const ovrigKvot = 500 / tdd;
-            const korrKvotDag = 100 / tdd;
-            const korrKvotNatt = 200 / tdd; // 200-regeln på natten
+        // Uppdatera kvot-fält i inställningar
+        inputFkvot.value = fKvot;
+        inputOkvot.value = oKvot;
+        inputKdag.value = kDag;
+        inputKnatt.value = kNatt;
 
-            // Visa kvoterna på skärmen (avrundat till en decimal för läsbarhet)
-            document.getElementById('kvot-frukost').value = frukostKvot.toFixed(1);
-            document.getElementById('kvot-ovrig').value = ovrigKvot.toFixed(1);
-            document.getElementById('kvot-korr-dag').value = korrKvotDag.toFixed(1);
-            document.getElementById('kvot-korr-natt').value = korrKvotNatt.toFixed(1);
-        } else {
-            document.getElementById('kvot-frukost').value = '-';
-            document.getElementById('kvot-ovrig').value = '-';
-            document.getElementById('kvot-korr-dag').value = '-';
-            document.getElementById('kvot-korr-natt').value = '-';
+        // Aktiv kvot för kolhydrater och korrigering
+        const aktivKhKvot = isFrukost ? fKvot : oKvot;
+        const aktivKorrKvot = isDag ? kDag : kNatt;
+
+        // Beräkna matinsulin
+        let matInsulin = 0;
+        if (aktivKhKvot > 0 && kh > 0) {
+            matInsulin = kh / aktivKhKvot;
         }
 
-        calculateDose();
-    }
-
-    function calculateDose() {
-        const tdd = parseFloat(document.getElementById('tdd-input').value) || 0;
-        const bsAktuellt = parseFloat(document.getElementById('bs-aktuellt').value) || 0;
-        const carbs = parseFloat(document.getElementById('kolhydrater').value) || 0;
-        const bsMal = parseFloat(document.getElementById('bs-mal').value) || 6.0;
-
-        const warnAlert = document.getElementById('alert-warn');
-        const dangerAlert = document.getElementById('alert-danger');
-        
-        warnAlert.style.display = 'none';
-        dangerAlert.style.display = 'none';
-
-        if (tdd <= 0) {
-            document.getElementById('total-dose-display').textContent = '0.0 E';
-            document.getElementById('breakdown-display').textContent = 'Ange ett giltigt TDD-värde.';
-            return;
-        }
-
-        // 1. Välj matkvot baserat på måltidstyp (300- eller 500-regeln)
-        const matKvot = (maltid === 'frukost') ? (300 / tdd) : (500 / tdd);
-        let matInsulin = carbs > 0 ? (carbs / matKvot) : 0;
-
-        // 2. Välj korrektionskvot (ISF) baserat på dygnet (100-regeln dag, 200-regeln natt)
-        const isf = (dygnet === 'dag') ? (100 / tdd) : (200 / tdd);
-        
-        // Korrektionsberäkning
+        // Beräkna korrigeringsinsulin
         let korrInsulin = 0;
-        let diffBS = bsAktuellt - bsMal;
-
-        if (diffBS > 0) {
-            korrInsulin = diffBS / isf;
-        } else if (diffBS < 0) {
-            // Minus-korrigering (avdrag) om BS ligger under målvärdet
-            korrInsulin = diffBS / isf; 
+        if (aktivKorrKvot > 0 && bs > mal) {
+            korrInsulin = (bs - mal) / aktivKorrKvot;
         }
 
-        // 3. Hantera varningar och akuta hypoglykemier
-        if (bsAktuellt <= 3.9) {
-            dangerAlert.innerHTML = `⚠️ <strong>Hypoglykemivarning!</strong> Ditt blodsocker är kritiskt lågt (${bsAktuellt} mmol/L). Ta snabba kolhydrater omedelbart och avvakta med måltidsinsulin enligt läkarordination.`;
-            dangerAlert.style.display = 'block';
-        } else if (diffBS < 0) {
-            warnAlert.innerHTML = `ℹ️ Blodsockret (${bsAktuellt} mmol/L) är lägre än målvärdet (${bsMal} mmol/L). Kalkylatorn gör ett automatiskt säkerhetsavdrag på korrektionsdosen.`;
-            warnAlert.style.display = 'block';
-        }
-
-        // 4. Räkna ut totaldos och se till att den inte kan bli negativ
+        // Totaldos med säkerhetsspärr (inga negativa doser)
         let totalDose = matInsulin + korrInsulin;
-        if (totalDose < 0) totalDose = 0;
-
-        // Uppdatera gränssnittet
-        document.getElementById('total-dose-display').textContent = totalDose.toFixed(1) + ' E';
         
-        let korrText = korrInsulin >= 0 ? `${korrInsulin.toFixed(1)} E` : `${korrInsulin.toFixed(1)} E (avdrag)`;
-        document.getElementById('breakdown-display').textContent = `Mat: ${matInsulin.toFixed(1)} E | Korr: ${korrText}`;
+        // Om BS är lågt (under målvärde), dra av eller varna
+        if (bs < mal && aktivKorrKvot > 0 && kh > 0) {
+            // Minska dosen om man är låg men ska äta
+            const avdrag = (mal - bs) / aktivKorrKvot;
+            totalDose = Math.max(0, totalDose - avdrag);
+        }
+
+        // Uppdatera UI
+        totalDoseEl.textContent = totalDose.toFixed(1) + ' E';
+        breakdownDoseEl.textContent = `Mat: ${matInsulin.toFixed(1)} E | Korr: ${korrInsulin.toFixed(1)} E`;
+
+        // Dynamisk tipsruta baserat på aktuellt blodsocker
+        updateTips(bs);
     }
+
+    function updateTips(bs) {
+        if (bs < 4.5) {
+            tipsTextEl.innerHTML = `<strong>Du är låg (${bs} mmol/L):</strong> Överväg att dela upp dosen vid en större måltid. Ta en mindre del (eller vänta helt) till efter du börjat äta så att blodsockret hinner vända uppåt. Vid akut känning, behandla med snabba kolhydrater först!`;
+        } else if (bs >= 4.5 && bs <= 8.0) {
+            tipsTextEl.innerHTML = `<strong>Ditt blodsocker är stabilt (${bs} mmol/L):</strong> Vid en normal stor måltid tas dosen oftast i direkt anslutning till maten. Om måltiden är mycket stor eller fet (t.ex. pizza), kan du behöva ta halva dosen nu och resten efter 1–2 timmar.`;
+        } else {
+            tipsTextEl.innerHTML = `<strong>Ditt blodsocker är högt (${bs} mmol/L):</strong> För att kapa blodsockertoppen kan du ge insulinet ett <em>försprång (pre-bolus)</em> på 15–30 minuter innan du börjar äta den stora måltiden, så att insulinet hinner börja verka i takt med kolhydraterna.`;
+        }
+    }
+
+    // Initial körning
+    calculate();
 </script>
 
 </body>
