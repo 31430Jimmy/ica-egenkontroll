@@ -428,6 +428,108 @@
   line-height: 1.45;
 }
 
+
+/* === Högerflik: Typ av mat === */
+.food-trigger {
+    position: fixed !important;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1002;
+    width: 58px !important;
+    min-height: 170px;
+    height: auto;
+    padding: 12px 8px !important;
+    margin: 0 !important;
+    box-sizing: border-box;
+    border: 1px solid #d6dce5 !important;
+    border-right: 0 !important;
+    border-radius: 16px 0 0 16px !important;
+    background: #ffffff !important;
+    box-shadow: -4px 6px 18px rgba(0,0,0,.13) !important;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    color: #243447 !important;
+}
+.food-trigger:hover {
+    border-color: #3b82f6 !important;
+    transform: translateY(-50%);
+}
+.food-trigger-left {
+    flex-direction: column;
+    gap: 7px;
+    width: 100%;
+}
+.food-trigger-left > span:last-child {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    text-align: center;
+    line-height: 1.1;
+}
+.food-trigger-left > span:first-child {
+    font-size: 21px;
+}
+.food-trigger-value {
+    display: block;
+    margin: 4px 0 0 !important;
+    font-size: 11px;
+    max-width: 110px;
+    white-space: normal;
+}
+.food-trigger-arrow {
+    font-size: 24px !important;
+    line-height: 1;
+    transform: rotate(180deg);
+}
+.food-trigger.is-open {
+    right: min(390px, 92vw);
+}
+.food-trigger.is-open .food-trigger-arrow {
+    transform: rotate(0deg);
+}
+
+/* Kompis-tips */
+.tip-box {
+    position: relative;
+}
+.tip-box::before {
+    content: "💡 Kompis-tips";
+    display: block;
+    font-weight: 800;
+    margin-bottom: 7px;
+}
+.tip-alcohol {
+    margin-top: 10px;
+    padding: 11px 12px;
+    border-radius: 10px;
+    background: #fff8e8;
+    border: 1px solid #efd28b;
+    color: #5f4a16;
+    font-size: 13px;
+    line-height: 1.45;
+}
+.food-option.alcohol-option {
+    border-color: #ead6a1;
+}
+.food-option.alcohol-option:hover,
+.food-option.alcohol-option.selected {
+    background: #fff8e8;
+    border-color: #d6ae4f;
+}
+@media (max-width: 520px) {
+    .food-trigger {
+        width: 50px !important;
+        min-height: 145px;
+        padding: 10px 6px !important;
+    }
+    .food-trigger.is-open {
+        right: 100%;
+    }
+}
+
 </style>
 </head>
 <body>
@@ -532,7 +634,7 @@
     <!-- Typ av mat -->
     <div class="form-group">
         <label>Typ av mat</label>
-        <button type="button" class="food-trigger" onclick="openFoodPanel()">
+        <button type="button" class="food-trigger" onclick="openFoodPanel()" aria-expanded="false" aria-controls="foodPanel">
             <span class="food-trigger-left">
                 <span>🍽️</span>
                 <span>Typ av mat<span class="food-trigger-value" id="selectedFoodText">Inte vald</span></span>
@@ -587,6 +689,14 @@
             <span class="food-option-text">
                 <strong>Mycket protein/fett</strong>
                 <span>T.ex. en större kötträtt med relativt lite kolhydrater.</span>
+            </span>
+        </button>
+
+        <button type="button" class="food-option alcohol-option" data-food="alkohol" onclick="selectFood('alkohol', 'Öl / alkohol')">
+            <span class="food-option-icon">🍺</span>
+            <span class="food-option-text">
+                <strong>Öl / alkohol</strong>
+                <span>Kan påverka glukos både under kvällen och flera timmar senare.</span>
             </span>
         </button>
 
@@ -716,11 +826,21 @@ function loadValues() {
 function openFoodPanel() {
     document.getElementById("foodPanel").classList.add("open");
     document.getElementById("foodOverlay").classList.add("open");
+    var trigger = document.querySelector(".food-trigger");
+    if (trigger) {
+        trigger.classList.add("is-open");
+        trigger.setAttribute("aria-expanded", "true");
+    }
 }
 
 function closeFoodPanel() {
     document.getElementById("foodPanel").classList.remove("open");
     document.getElementById("foodOverlay").classList.remove("open");
+    var trigger = document.querySelector(".food-trigger");
+    if (trigger) {
+        trigger.classList.remove("is-open");
+        trigger.setAttribute("aria-expanded", "false");
+    }
 }
 
 function selectFood(type, label) {
@@ -822,97 +942,62 @@ function calculateDose() {
 
 function updateTipBox(bs) {
     var tipBox = document.getElementById("tipBox");
-    var trend = document.querySelector('input[name="trend"]:checked').value;
-    var maltid = document.querySelector('input[name="maltid"]:checked').value;
+    var trendEl = document.querySelector('input[name="trend"]:checked');
+    var maltidEl = document.querySelector('input[name="maltid"]:checked');
+    var trend = trendEl ? trendEl.value : "stabil";
+    var maltid = maltidEl ? maltidEl.value : "ovrig";
     var maltidText = maltid === "frukost" ? "frukosten" : "måltiden";
     var foodType = localStorage.getItem("insulinCalculatorFoodType") || "ingen";
 
-    var foodExtra = "";
-    if (foodType === "snabba" || foodType === "dryck") {
-        foodExtra = " Snabba kolhydrater kan göra att glukos stiger snabbt.";
-    } else if (foodType === "langsamma") {
-        foodExtra = " Fiberrik mat kan göra att glukos stiger mer långsamt.";
-    } else if (foodType === "fet") {
-        foodExtra = " Mycket fett kan göra att glukosstegringen kommer senare och håller i sig längre.";
-    } else if (foodType === "protein") {
-        foodExtra = " Mycket protein och fett kan göra att glukosstegringen kommer senare.";
-    } else if (foodType === "blandad") {
-        foodExtra = " En blandad måltid kan ge en jämnare och mer utdragen påverkan.";
-    }
+    tipBox.className = "tip-box";
+
+    var text = "";
 
     if (bs < 4.5) {
-        tipBox.className = "tip-box tip-low";
-
+        tipBox.classList.add("tip-low");
         if (trend === "ner") {
-            tipBox.innerHTML =
-                "<strong>↘ Lågt och sjunkande:</strong> Glukos är lågt och fortsätter neråt. " +
-                "Ta hand om det låga värdet först och var extra försiktig med NovoRapid före " + maltidText + ".";
+            text = "<strong>↘ Lågt och sjunkande:</strong> Du ligger lågt och pilen går dessutom neråt. Ta hand om det låga värdet först. Var extra försiktig med NovoRapid innan " + maltidText + ".";
         } else if (trend === "upp") {
-            tipBox.innerHTML =
-                "<strong>↗ Lågt men stigande:</strong> Glukos är lågt men går uppåt. " +
-                "Hantera det låga värdet först och kolla sedan läget igen.";
+            text = "<strong>↗ Lågt men stigande:</strong> Du ligger lågt men pilen går uppåt. Ta hand om det låga värdet först och kolla sedan läget igen.";
         } else {
-            tipBox.innerHTML =
-                "<strong>→ Lågt glukos:</strong> Du ligger lågt före " + maltidText + ". " +
-                "Ta hand om det låga värdet först och var försiktig med NovoRapid.";
+            text = "<strong>→ Lågt glukos:</strong> Du ligger lågt inför " + maltidText + ". Ta hand om det låga värdet först och var försiktig med NovoRapid.";
         }
-        return;
+    } else if (bs > 8 && trend === "upp") {
+        tipBox.classList.add("tip-high");
+        text = "<strong>↗ Högt och stigande:</strong> Du ligger högt och pilen går uppåt. NovoRapid börjar normalt verka efter ungefär 10–20 minuter, så tajmingen kan spela roll. Lägg inte automatiskt till extra insulin bara på grund av pilen.";
+    } else if (bs > 8 && trend === "ner") {
+        tipBox.classList.add("tip-trend");
+        text = "<strong>↘ Högt men sjunkande:</strong> Du ligger högt, men glukos är redan på väg ner. Titta på både siffran och pilen innan du korrigerar. Ett högt värde betyder inte automatiskt att mer insulin behövs just nu.";
+    } else if (bs > 8) {
+        tipBox.classList.add("tip-high");
+        text = "<strong>→ Högt men stabilt:</strong> Du ligger över målområdet utan tydlig förändring. Tänk också på att insulin du redan tagit kan fortsätta verka under de kommande timmarna.";
+    } else if (trend === "upp") {
+        tipBox.classList.add("tip-high");
+        text = "<strong>↗ Glukos på väg upp:</strong> Glukos stiger redan inför " + maltidText + ". NovoRapid börjar normalt verka efter ungefär 10–20 minuter, så tajmingen före maten kan vara viktig. Använd inte en fast extra väntetid bara på grund av pilen.";
+    } else if (trend === "ner") {
+        tipBox.classList.add("tip-trend");
+        text = "<strong>↘ Glukos på väg ner:</strong> Glukos sjunker redan inför " + maltidText + ". Var försiktig med insulin när trenden går neråt. Om du brukar dela eller senarelägga dosen är det något du kan ta upp med diabetesteamet.";
+    } else {
+        tipBox.classList.add("tip-normal");
+        text = "<strong>→ Stabilt glukos:</strong> Glukos ser stabilt ut inför " + maltidText + ". NovoRapid tas normalt precis före maten och börjar vanligtvis verka efter ungefär 10–20 minuter.";
     }
 
-    if (bs > 8.0 && trend === "upp") {
-        tipBox.className = "tip-box tip-high";
-        tipBox.innerHTML =
-            "<strong>↗ Högt och stigande:</strong> Glukos är högt och stiger. " +
-            "NovoRapid börjar normalt verka inom cirka 10–20 minuter. " +
-            "Timing före maten kan därför vara viktig. Lägg inte automatiskt till extra insulin bara på grund av pilen." +
-            foodExtra;
-        return;
+    if (foodType === "alkohol") {
+        text += '<div class="tip-alcohol"><strong>🍺 Öl / alkohol:</strong> Alkohol kan göra att glukos först stiger men senare sjunker. Ät gärna samtidigt, håll koll på glukos under kvällen och tänk på att insulin du redan tagit fortfarande kan verka. Ta inte extra insulin bara för att alkohol är valt.</div>';
+    } else if (foodType === "snabba" || foodType === "dryck") {
+        text += " Snabba kolhydrater kan göra att glukos stiger snabbt.";
+    } else if (foodType === "langsamma") {
+        text += " Fiberrik mat kan göra att glukos stiger mer långsamt.";
+    } else if (foodType === "fet") {
+        text += " Mycket fett kan göra att glukosstegringen kommer senare och håller i sig längre.";
+    } else if (foodType === "protein") {
+        text += " Mycket protein och fett kan göra att glukosstegringen kommer senare.";
+    } else if (foodType === "blandad") {
+        text += " En blandad måltid kan ge en jämnare och mer utdragen påverkan.";
     }
 
-    if (bs > 8.0 && trend === "ner") {
-        tipBox.className = "tip-box tip-trend";
-        tipBox.innerHTML =
-            "<strong>↘ Högt men sjunkande:</strong> Glukos är högt men går redan neråt. " +
-            "Titta på både siffran och pilen innan du korrigerar. Ett högt värde betyder inte automatiskt att mer insulin behövs just nu." +
-            foodExtra;
-        return;
-    }
-
-    if (bs > 8.0 && trend === "stabil") {
-        tipBox.className = "tip-box tip-high";
-        tipBox.innerHTML =
-            "<strong>→ Högt men stabilt:</strong> Glukos ligger över målområdet utan tydlig förändring. " +
-            "NovoRapid tas normalt precis före maten. Tänk också på att insulin som redan tagits kan fortsätta verka under de kommande timmarna." +
-            foodExtra;
-        return;
-    }
-
-    if (trend === "stabil") {
-        tipBox.className = "tip-box tip-normal";
-        tipBox.innerHTML =
-            "<strong>→ Stabilt glukos:</strong> Glukos är stabilt inför " + maltidText + ". " +
-            "NovoRapid tas normalt precis före maten. Det börjar vanligtvis verka inom cirka 10–20 minuter." +
-            foodExtra;
-        return;
-    }
-
-    if (trend === "upp") {
-        tipBox.className = "tip-box tip-high";
-        tipBox.innerHTML =
-            "<strong>↗ Glukos på väg upp:</strong> Glukos stiger redan inför " + maltidText + ". " +
-            "NovoRapid börjar normalt verka inom cirka 10–20 minuter, så timing före maten kan vara viktig. " +
-            "Använd inte en fast extra väntetid bara på grund av pilen." +
-            foodExtra;
-        return;
-    }
-
-    tipBox.className = "tip-box tip-trend";
-    tipBox.innerHTML =
-        "<strong>↘ Glukos på väg ner:</strong> Glukos sjunker inför " + maltidText + ". " +
-        "Var försiktig med insulin före maten när trenden redan är nedåt. Om du brukar dela eller senarelägga dosen kan det vara något att ta upp med diabetesteamet." +
-        foodExtra;
+    tipBox.innerHTML = text;
 }
-
 // Ladda sparade värden
 loadValues();
 
@@ -924,23 +1009,22 @@ setMealByTime();
 // Initiera kalkylatorn
 updateKvoter();
 
-/* Sync fixed meal tab */
+
+
+
+/* Sync right-edge meal tab */
 (function () {
-  const trigger = document.getElementById('foodTypeTrigger');
-  const panel = document.getElementById('foodTypePanel');
-  if (!trigger || !panel) return;
+    var trigger = document.querySelector(".food-trigger");
+    var panel = document.getElementById("foodPanel");
+    if (!trigger || !panel) return;
 
-  const sync = () => {
-    const open = panel.classList.contains('open');
-    trigger.classList.toggle('is-open', open);
-    trigger.setAttribute('aria-expanded', String(open));
-  };
-
-  const observer = new MutationObserver(sync);
-  observer.observe(panel, { attributes: true, attributeFilter: ['class'] });
-  sync();
+    var observer = new MutationObserver(function () {
+        var open = panel.classList.contains("open");
+        trigger.classList.toggle("is-open", open);
+        trigger.setAttribute("aria-expanded", String(open));
+    });
+    observer.observe(panel, { attributes: true, attributeFilter: ["class"] });
 })();
-
 </script>
 
 </body>
