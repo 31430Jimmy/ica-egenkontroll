@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Insulinkalkylator med Säkerhetsspärr</title>
+    <title>Insulinkalkylator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -27,9 +27,7 @@
             border-bottom: 2px solid #ecf0f1;
             padding-bottom: 10px;
         }
-        .form-group {
-            margin-bottom: 18px;
-        }
+        .form-group { margin-bottom: 18px; }
         label {
             display: block;
             margin-bottom: 6px;
@@ -54,9 +52,7 @@
             font-weight: normal;
             transition: all 0.2s ease;
         }
-        .radio-group input[type="radio"] {
-            display: none;
-        }
+        .radio-group input[type="radio"] { display: none; }
         .radio-group input[type="radio"]:checked + .radio-label {
             background: #e8f4fd;
             border-color: #3b82f6;
@@ -68,9 +64,7 @@
             display: inline-block;
             vertical-align: middle;
         }
-        .icon-fill {
-            fill: #333;
-        }
+        .icon-fill { fill: #333; }
         .icon-stroke {
             fill: none;
             stroke: #333;
@@ -90,6 +84,186 @@
             border-color: #3b82f6;
             outline: none;
         }
+
+        /* Glukostrend */
+        .trend-group {
+            display: flex;
+            gap: 8px;
+        }
+        .trend-option {
+            position: relative;
+            flex: 1;
+        }
+        .trend-option input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .trend-label {
+            min-height: 58px;
+            padding: 8px 5px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 12px;
+            font-weight: normal;
+        }
+        .trend-arrow {
+            font-size: 23px;
+            line-height: 20px;
+            font-weight: bold;
+        }
+        .trend-option input:checked + .trend-label {
+            background: #e8f4fd;
+            border-color: #3b82f6;
+            color: #1e3a8a;
+            font-weight: bold;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(59,130,246,0.15);
+        }
+
+        /* Typ av mat - slide-in panel */
+        .food-trigger {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            padding: 12px 14px;
+            cursor: pointer;
+            font-size: 15px;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+        .food-trigger:hover {
+            border-color: #3b82f6;
+            background: #f5f9ff;
+        }
+        .food-trigger-left {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-weight: bold;
+        }
+        .food-trigger-value {
+            color: #6b7280;
+            font-weight: normal;
+            margin-left: 4px;
+        }
+        .food-trigger-arrow {
+            color: #3b82f6;
+            font-size: 20px;
+        }
+        .food-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.25);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+        .food-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .food-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: min(390px, 92vw);
+            height: 100vh;
+            box-sizing: border-box;
+            background: #fff;
+            z-index: 1001;
+            padding: 24px;
+            box-shadow: -5px 0 18px rgba(0,0,0,0.15);
+            transform: translateX(100%);
+            transition: transform 0.28s ease;
+            overflow-y: auto;
+        }
+        .food-panel.open {
+            transform: translateX(0);
+        }
+        .food-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .food-panel-header h2 {
+            margin: 0;
+            font-size: 20px;
+            color: #2c3e50;
+        }
+        .food-close {
+            border: none;
+            background: #f3f4f6;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 22px;
+            cursor: pointer;
+            color: #374151;
+        }
+        .food-option {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px;
+            margin-bottom: 9px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            background: #f8f9fa;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+        .food-option:hover {
+            border-color: #3b82f6;
+            background: #f5f9ff;
+        }
+        .food-option.selected {
+            border-color: #3b82f6;
+            background: #e8f4fd;
+        }
+        .food-option-icon {
+            width: 32px;
+            text-align: center;
+            font-size: 22px;
+        }
+        .food-option-text strong {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+        .food-option-text span {
+            display: block;
+            font-size: 12px;
+            color: #6b7280;
+            line-height: 1.35;
+        }
+        .food-note {
+            margin-top: 18px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 12px;
+            line-height: 1.45;
+            color: #4b5563;
+        }
+
         .results-box {
             background: #f8f9fa;
             border-radius: 8px;
@@ -145,6 +319,11 @@
             border: 1px solid #dcfce7;
             color: #166534;
         }
+        .tip-trend {
+            background-color: #eff6ff;
+            border: 1px solid #dbeafe;
+            color: #1e40af;
+        }
         .disclaimer {
             font-size: 11px;
             color: #6b7280;
@@ -152,7 +331,84 @@
             text-align: center;
             line-height: 1.4;
         }
-    </style>
+    
+/* Fixed right-edge meal tab */
+.food-type-trigger {
+  position: fixed !important;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 9997;
+  width: 52px !important;
+  min-height: 150px !important;
+  height: 150px;
+  margin: 0 !important;
+  padding: 12px 7px !important;
+  border: 1px solid #d8dee8 !important;
+  border-right: 0 !important;
+  border-radius: 16px 0 0 16px !important;
+  background: #ffffff !important;
+  box-shadow: -4px 5px 18px rgba(20,30,50,.12) !important;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #172033 !important;
+  transition: right .28s cubic-bezier(.2,.8,.2,1), box-shadow .18s ease !important;
+}
+.food-type-trigger:hover {
+  transform: translateY(-50%);
+  box-shadow: -6px 6px 22px rgba(20,30,50,.17) !important;
+}
+.food-type-trigger.is-open {
+  right: min(430px, 94vw);
+}
+.food-type-trigger .food-trigger-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  font-size: 17px;
+}
+.food-type-trigger .food-trigger-copy {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-align: center;
+  flex: 0 0 auto;
+}
+.food-type-trigger .food-trigger-title {
+  display: none;
+}
+.food-type-trigger .food-trigger-value {
+  max-width: 110px;
+  font-size: 12px;
+  line-height: 1.15;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+.food-type-trigger .food-trigger-arrow {
+  font-size: 21px;
+  line-height: 1;
+  transform: rotate(180deg);
+}
+.food-type-trigger.is-open .food-trigger-arrow {
+  transform: rotate(0deg);
+}
+
+@media (max-width: 520px) {
+  .food-type-trigger {
+    width: 46px !important;
+    min-height: 128px !important;
+    height: 128px;
+    border-radius: 14px 0 0 14px !important;
+  }
+  .food-type-trigger.is-open {
+    right: 100%;
+  }
+}
+
+</style>
 </head>
 <body>
 
@@ -165,7 +421,6 @@
         <div class="radio-group">
             <input type="radio" id="dag" name="tid" value="dag" checked onchange="calculateDose()">
             <label for="dag" class="radio-label">
-                <!-- Sol-ikon med kontur (Stilren) -->
                 <svg class="icon icon-stroke" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="5"></circle>
                     <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -182,7 +437,6 @@
 
             <input type="radio" id="natt" name="tid" value="natt" onchange="calculateDose()">
             <label for="natt" class="radio-label">
-                <!-- Måne-ikon med kontur (Stilren) -->
                 <svg class="icon icon-stroke" viewBox="0 0 24 24">
                     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                 </svg>
@@ -197,7 +451,6 @@
         <div class="radio-group">
             <input type="radio" id="frukost" name="maltid" value="frukost" checked onchange="calculateDose()">
             <label for="frukost" class="radio-label">
-                <!-- Kaffekopp-ikon med kontur (Stilren) -->
                 <svg class="icon icon-stroke" viewBox="0 0 24 24">
                     <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
                     <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
@@ -210,14 +463,10 @@
 
             <input type="radio" id="ovrig" name="maltid" value="ovrig" onchange="calculateDose()">
             <label for="ovrig" class="radio-label">
-                <!-- Svart fylld tallrik med kniv och gaffel (Stilren fylld) -->
                 <svg class="icon icon-fill" viewBox="0 0 24 24">
-                    <!-- Gaffel till vänster -->
                     <path d="M3 2v5c0 1.1.9 2 2 2h1v11h2V9h1c1.1 0 2-.9 2-2V2H9v5H8V2H6v5H5V2H3z"/>
-                    <!-- Kniv i mitten -->
                     <path d="M13 2v8h2v10h2V2s-4 1-4 0z"/>
-                    <!-- Tallrik till höger -->
-                    <path d="M20 6c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm0 6.5c-1.4 0-2.5-1.1-2.5-2.5s1.1-2.5 2.5-2.5 2.5 1.1 2.5 2.5-1.1 2.5-2.5 2.5z"/>
+                    <path d="M20 6c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm0 6.5c-1.4 0-2.5-1.1-2.5-2.5s1.1-2.5-2.5-2.5 2.5 1.1 2.5 2.5-1.1 2.5-2.5 2.5z"/>
                 </svg>
                 Övrig måltid
             </label>
@@ -229,6 +478,119 @@
         <label for="bs">Aktuellt BS (mmol/L)</label>
         <input type="number" id="bs" value="10.0" step="0.1" min="0" oninput="calculateDose()">
     </div>
+
+    <!-- Glukostrend -->
+    <div class="form-group">
+        <label>Glukostrend</label>
+        <div class="trend-group">
+            <div class="trend-option">
+                <input type="radio" id="trendNer" name="trend" value="ner" onchange="calculateDose()">
+                <label for="trendNer" class="trend-label">
+                    <span class="trend-arrow">↘</span>
+                    <span>På väg ner</span>
+                </label>
+            </div>
+
+            <div class="trend-option">
+                <input type="radio" id="trendStabil" name="trend" value="stabil" checked onchange="calculateDose()">
+                <label for="trendStabil" class="trend-label">
+                    <span class="trend-arrow">→</span>
+                    <span>Stabil</span>
+                </label>
+            </div>
+
+            <div class="trend-option">
+                <input type="radio" id="trendUpp" name="trend" value="upp" onchange="calculateDose()">
+                <label for="trendUpp" class="trend-label">
+                    <span class="trend-arrow">↗</span>
+                    <span>På väg upp</span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Typ av mat -->
+    <div class="form-group">
+        <label>Typ av mat</label>
+        <button type="button" class="food-trigger" onclick="openFoodPanel()">
+            <span class="food-trigger-left">
+                <span>🍽️</span>
+                <span>Typ av mat<span class="food-trigger-value" id="selectedFoodText">Inte vald</span></span>
+            </span>
+            <span class="food-trigger-arrow">›</span>
+        </button>
+    </div>
+
+    <!-- Infällbar panel för typ av mat -->
+    <div id="foodOverlay" class="food-overlay" onclick="closeFoodPanel()"></div>
+
+    <aside id="foodPanel" class="food-panel" aria-label="Välj typ av mat">
+        <div class="food-panel-header">
+            <h2>Typ av mat</h2>
+            <button type="button" class="food-close" onclick="closeFoodPanel()" aria-label="Stäng">×</button>
+        </div>
+
+        <button type="button" class="food-option" data-food="snabba" onclick="selectFood('snabba', 'Snabba kolhydrater')">
+            <span class="food-option-icon">⚡</span>
+            <span class="food-option-text">
+                <strong>Snabba kolhydrater</strong>
+                <span>T.ex. juice, vanlig läsk, godis eller söta flingor.</span>
+            </span>
+        </button>
+
+        <button type="button" class="food-option" data-food="langsamma" onclick="selectFood('langsamma', 'Långsammare kolhydrater')">
+            <span class="food-option-icon">🌾</span>
+            <span class="food-option-text">
+                <strong>Långsammare kolhydrater</strong>
+                <span>T.ex. fullkorn, bönor, linser och fiberrik mat.</span>
+            </span>
+        </button>
+
+        <button type="button" class="food-option" data-food="blandad" onclick="selectFood('blandad', 'Vanlig/blandad måltid')">
+            <span class="food-option-icon">🍽️</span>
+            <span class="food-option-text">
+                <strong>Vanlig/blandad måltid</strong>
+                <span>En blandning av kolhydrater, protein och grönsaker.</span>
+            </span>
+        </button>
+
+        <button type="button" class="food-option" data-food="fet" onclick="selectFood('fet', 'Fetare måltid')">
+            <span class="food-option-icon">🍕</span>
+            <span class="food-option-text">
+                <strong>Fetare måltid</strong>
+                <span>T.ex. pizza, hamburgare eller annan mat med mycket fett.</span>
+            </span>
+        </button>
+
+        <button type="button" class="food-option" data-food="protein" onclick="selectFood('protein', 'Mycket protein/fett')">
+            <span class="food-option-icon">🥩</span>
+            <span class="food-option-text">
+                <strong>Mycket protein/fett</strong>
+                <span>T.ex. en större kötträtt med relativt lite kolhydrater.</span>
+            </span>
+        </button>
+
+        <button type="button" class="food-option" data-food="dryck" onclick="selectFood('dryck', 'Söt dryck')">
+            <span class="food-option-icon">🥤</span>
+            <span class="food-option-text">
+                <strong>Söt dryck</strong>
+                <span>T.ex. vanlig läsk, energidryck med socker eller juice.</span>
+            </span>
+        </button>
+
+        <button type="button" class="food-option" data-food="ingen" onclick="selectFood('ingen', 'Inte vald')">
+            <span class="food-option-icon">—</span>
+            <span class="food-option-text">
+                <strong>Inte vald</strong>
+                <span>Använd om du inte vill ange någon mattyp.</span>
+            </span>
+        </button>
+
+        <div class="food-note">
+            Mattypen används för att göra tipset mer begripligt. Den ändrar inte den beräknade dosen.
+            Pasta, ris och potatis kan till exempel påverka glukos olika beroende på mängd, tillagning och vad som äts tillsammans med dem.
+        </div>
+    </aside>
 
     <!-- Kolhydrater -->
     <div class="form-group">
@@ -242,12 +604,12 @@
         <div class="breakdown" id="breakdownText">Mat: 0.0 E | Korr: 0.0 E</div>
     </div>
 
-    <!-- Tipsruta för insulindelning/timing -->
+    <!-- Tipsruta -->
     <div id="tipBox" class="tip-box tip-normal"></div>
 
     <!-- Inställningar och kvoter -->
     <button class="toggle-btn" onclick="toggleSettings()">Inställningar och Kvoter ▼</button>
-    
+
     <div id="settingsPanel" class="settings-panel">
         <div class="form-group">
             <label for="tdd">TDD (Styrande referens)</label>
@@ -288,7 +650,10 @@ function saveValues() {
         tdd: document.getElementById("tdd").value,
         malval: document.getElementById("malval").value,
         tid: document.querySelector('input[name="tid"]:checked').value,
-        maltid: document.querySelector('input[name="maltid"]:checked').value
+        maltid: document.querySelector('input[name="maltid"]:checked').value,
+        trend: document.querySelector('input[name="trend"]:checked').value,
+        foodType: localStorage.getItem("insulinCalculatorFoodType") || "ingen",
+        foodLabel: localStorage.getItem("insulinCalculatorFoodLabel") || "Inte vald"
     }));
 }
 
@@ -313,7 +678,71 @@ function loadValues() {
             var maltid = document.querySelector('input[name="maltid"][value="' + values.maltid + '"]');
             if (maltid) maltid.checked = true;
         }
+
+        if (values.trend) {
+            var trend = document.querySelector('input[name="trend"][value="' + values.trend + '"]');
+            if (trend) trend.checked = true;
+        }
+        if (values.foodType) {
+            localStorage.setItem("insulinCalculatorFoodType", values.foodType);
+        }
+        if (values.foodLabel) {
+            localStorage.setItem("insulinCalculatorFoodLabel", values.foodLabel);
+        }
+        updateFoodUI();
     } catch (e) {}
+}
+
+function openFoodPanel() {
+    document.getElementById("foodPanel").classList.add("open");
+    document.getElementById("foodOverlay").classList.add("open");
+}
+
+function closeFoodPanel() {
+    document.getElementById("foodPanel").classList.remove("open");
+    document.getElementById("foodOverlay").classList.remove("open");
+}
+
+function selectFood(type, label) {
+    localStorage.setItem("insulinCalculatorFoodType", type);
+    localStorage.setItem("insulinCalculatorFoodLabel", label);
+    updateFoodUI();
+    closeFoodPanel();
+    calculateDose();
+}
+
+function updateFoodUI() {
+    var label = localStorage.getItem("insulinCalculatorFoodLabel") || "Inte vald";
+    var selected = localStorage.getItem("insulinCalculatorFoodType") || "ingen";
+
+    document.getElementById("selectedFoodText").innerText = " · " + label;
+
+    document.querySelectorAll(".food-option").forEach(function(option) {
+        option.classList.toggle("selected", option.dataset.food === selected);
+    });
+}
+
+function setMealByTime() {
+    var now = new Date();
+    var hours = now.getHours();
+    var minutes = now.getMinutes();
+    var timeInMinutes = hours * 60 + minutes;
+
+    var frukost = document.getElementById("frukost");
+    var ovrig = document.getElementById("ovrig");
+
+    // 06:00 - 10:30 → Frukost
+    if (timeInMinutes >= 360 && timeInMinutes <= 630) {
+        frukost.checked = true;
+    }
+    // 23:00 - 03:00 → Övrig måltid
+    else if (timeInMinutes >= 1380 || timeInMinutes <= 180) {
+        ovrig.checked = true;
+    }
+    // Övrig tid → Övrig måltid
+    else {
+        ovrig.checked = true;
+    }
 }
 
 function toggleSettings() {
@@ -328,66 +757,170 @@ function toggleSettings() {
 function updateKvoter() {
     saveValues();
     var tdd = parseFloat(document.getElementById("tdd").value) || 40;
-    
-    // Beräkna kvoter enligt standardregler
+
     document.getElementById("frukostKvot").value = (300 / tdd).toFixed(1);
     document.getElementById("ovrigKvot").value = (500 / tdd).toFixed(1);
     document.getElementById("korrDag").value = (100 / tdd).toFixed(1);
     document.getElementById("korrNatt").value = (200 / tdd).toFixed(1);
-    
+
     calculateDose();
 }
 
 function calculateDose() {
     saveValues();
+
     var bs = parseFloat(document.getElementById("bs").value) || 0;
     var kh = parseFloat(document.getElementById("kh").value) || 0;
     var malval = parseFloat(document.getElementById("malval").value) || 6.0;
-    
+
     var isDag = document.getElementById("dag").checked;
     var isFrukost = document.getElementById("frukost").checked;
-    
-    var khKvot = isFrukost ? parseFloat(document.getElementById("frukostKvot").value) : parseFloat(document.getElementById("ovrigKvot").value);
-    var korrKvot = isDag ? parseFloat(document.getElementById("korrDag").value) : parseFloat(document.getElementById("korrNatt").value);
-    
-    // Matdos
+
+    var khKvot = isFrukost
+        ? parseFloat(document.getElementById("frukostKvot").value)
+        : parseFloat(document.getElementById("ovrigKvot").value);
+
+    var korrKvot = isDag
+        ? parseFloat(document.getElementById("korrDag").value)
+        : parseFloat(document.getElementById("korrNatt").value);
+
     var matDose = khKvot > 0 ? kh / khKvot : 0;
-    
-    // Korrigeringsdos
+
     var korrDose = 0;
     if (bs > malval && korrKvot > 0) {
         korrDose = (bs - malval) / korrKvot;
     }
-    
-    // Totaldos (Säkerhetsspärr: Ingen negativ dos)
+
     var totalDose = Math.max(0, matDose + korrDose);
-    
-    // Uppdatera UI
+
     document.getElementById("totalDose").innerText = totalDose.toFixed(1) + " E";
-    document.getElementById("breakdownText").innerText = "Mat: " + matDose.toFixed(1) + " E | Korr: " + korrDose.toFixed(1) + " E";
-    
-    // Uppdatera tipsruta baserat på aktuellt BS
+    document.getElementById("breakdownText").innerText =
+        "Mat: " + matDose.toFixed(1) + " E | Korr: " + korrDose.toFixed(1) + " E";
+
     updateTipBox(bs);
 }
 
 function updateTipBox(bs) {
     var tipBox = document.getElementById("tipBox");
-    
+    var trend = document.querySelector('input[name="trend"]:checked').value;
+    var maltid = document.querySelector('input[name="maltid"]:checked').value;
+    var maltidText = maltid === "frukost" ? "frukosten" : "måltiden";
+    var foodType = localStorage.getItem("insulinCalculatorFoodType") || "ingen";
+
+    var foodExtra = "";
+    if (foodType === "snabba" || foodType === "dryck") {
+        foodExtra = " Snabba kolhydrater kan göra att glukos stiger snabbt.";
+    } else if (foodType === "langsamma") {
+        foodExtra = " Fiberrik mat kan göra att glukos stiger mer långsamt.";
+    } else if (foodType === "fet") {
+        foodExtra = " Mycket fett kan göra att glukosstegringen kommer senare och håller i sig längre.";
+    } else if (foodType === "protein") {
+        foodExtra = " Mycket protein och fett kan göra att glukosstegringen kommer senare.";
+    } else if (foodType === "blandad") {
+        foodExtra = " En blandad måltid kan ge en jämnare och mer utdragen påverkan.";
+    }
+
     if (bs < 4.5) {
         tipBox.className = "tip-box tip-low";
-        tipBox.innerHTML = "<strong>💡 Tips vid lågt blodsocker (&lt; 4.5 mmol/L):</strong> Du ligger lågt innan maten. Om du ska äta en större portion, överväg att dela upp dosen. Ta en mindre del (eller inget) i början för att låta blodsockret stiga, och ta resten efter måltiden. Åtgärda alltid en eventuell akut känning först!";
-    } else if (bs > 8.0) {
-        tipBox.className = "tip-box tip-high";
-        tipBox.innerHTML = "<strong>💡 Tips vid högt blodsocker (&gt; 8.0 mmol/L):</strong> Ditt startvärde är högt. Ge insulinet ett försprång (pre-bolus) genom att ta dosen 15–30 minuter innan du börjar äta den stora portionen. Det hjälper till att kapa den kommande blodsockertoppen.";
-    } else {
-        tipBox.className = "tip-box tip-normal";
-        tipBox.innerHTML = "<strong>💡 Tips vid stabilt blodsocker (4.5 - 8.0 mmol/L):</strong> Ditt värde är stabilt. Vid en normal stor måltid tas dosen vanligtvis i direkt anslutning till maten. Tänk på att om maten innehåller mycket fett och protein kan kolhydratupptaget fördröjas, vilket också kan motivera en delad dos.";
+
+        if (trend === "ner") {
+            tipBox.innerHTML =
+                "<strong>↘ Lågt och sjunkande:</strong> Glukos är lågt och fortsätter neråt. " +
+                "Ta hand om det låga värdet först och var extra försiktig med NovoRapid före " + maltidText + ".";
+        } else if (trend === "upp") {
+            tipBox.innerHTML =
+                "<strong>↗ Lågt men stigande:</strong> Glukos är lågt men går uppåt. " +
+                "Hantera det låga värdet först och kolla sedan läget igen.";
+        } else {
+            tipBox.innerHTML =
+                "<strong>→ Lågt glukos:</strong> Du ligger lågt före " + maltidText + ". " +
+                "Ta hand om det låga värdet först och var försiktig med NovoRapid.";
+        }
+        return;
     }
+
+    if (bs > 8.0 && trend === "upp") {
+        tipBox.className = "tip-box tip-high";
+        tipBox.innerHTML =
+            "<strong>↗ Högt och stigande:</strong> Glukos är högt och stiger. " +
+            "NovoRapid börjar normalt verka inom cirka 10–20 minuter. " +
+            "Timing före maten kan därför vara viktig. Lägg inte automatiskt till extra insulin bara på grund av pilen." +
+            foodExtra;
+        return;
+    }
+
+    if (bs > 8.0 && trend === "ner") {
+        tipBox.className = "tip-box tip-trend";
+        tipBox.innerHTML =
+            "<strong>↘ Högt men sjunkande:</strong> Glukos är högt men går redan neråt. " +
+            "Titta på både siffran och pilen innan du korrigerar. Ett högt värde betyder inte automatiskt att mer insulin behövs just nu." +
+            foodExtra;
+        return;
+    }
+
+    if (bs > 8.0 && trend === "stabil") {
+        tipBox.className = "tip-box tip-high";
+        tipBox.innerHTML =
+            "<strong>→ Högt men stabilt:</strong> Glukos ligger över målområdet utan tydlig förändring. " +
+            "NovoRapid tas normalt precis före maten. Tänk också på att insulin som redan tagits kan fortsätta verka under de kommande timmarna." +
+            foodExtra;
+        return;
+    }
+
+    if (trend === "stabil") {
+        tipBox.className = "tip-box tip-normal";
+        tipBox.innerHTML =
+            "<strong>→ Stabilt glukos:</strong> Glukos är stabilt inför " + maltidText + ". " +
+            "NovoRapid tas normalt precis före maten. Det börjar vanligtvis verka inom cirka 10–20 minuter." +
+            foodExtra;
+        return;
+    }
+
+    if (trend === "upp") {
+        tipBox.className = "tip-box tip-high";
+        tipBox.innerHTML =
+            "<strong>↗ Glukos på väg upp:</strong> Glukos stiger redan inför " + maltidText + ". " +
+            "NovoRapid börjar normalt verka inom cirka 10–20 minuter, så timing före maten kan vara viktig. " +
+            "Använd inte en fast extra väntetid bara på grund av pilen." +
+            foodExtra;
+        return;
+    }
+
+    tipBox.className = "tip-box tip-trend";
+    tipBox.innerHTML =
+        "<strong>↘ Glukos på väg ner:</strong> Glukos sjunker inför " + maltidText + ". " +
+        "Var försiktig med insulin före maten när trenden redan är nedåt. Om du brukar dela eller senarelägga dosen kan det vara något att ta upp med diabetesteamet." +
+        foodExtra;
 }
 
-// Ladda sparade värden och initiera kalkylatorn
+// Ladda sparade värden
 loadValues();
+
+updateFoodUI();
+
+// Sätt måltid automatiskt utifrån aktuell tid
+setMealByTime();
+
+// Initiera kalkylatorn
 updateKvoter();
+
+/* Sync fixed meal tab */
+(function () {
+  const trigger = document.getElementById('foodTypeTrigger');
+  const panel = document.getElementById('foodTypePanel');
+  if (!trigger || !panel) return;
+
+  const sync = () => {
+    const open = panel.classList.contains('open');
+    trigger.classList.toggle('is-open', open);
+    trigger.setAttribute('aria-expanded', String(open));
+  };
+
+  const observer = new MutationObserver(sync);
+  observer.observe(panel, { attributes: true, attributeFilter: ['class'] });
+  sync();
+})();
+
 </script>
 
 </body>
